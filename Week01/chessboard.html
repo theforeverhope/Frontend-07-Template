@@ -1,0 +1,300 @@
+<style>
+.cell {
+  display: inline-block;
+  background: lightgreen;
+  border: 1px solid green;
+  width: 100px;
+  height: 100px;
+  line-height: 100px;
+  font-size: 50px;
+  text-align: center;
+
+  /* why element will move down? */
+  vertical-align: middle;
+}
+
+.result {
+  color: red;
+  font-size: 50px;
+}
+</style>
+
+<div id="board"></div>
+<div id="result"></div>
+
+<script>
+  // number of consecutive chesses to win the game
+  let chessWinNum = 5;
+  // number of chess board row
+  let chessRow = 5;
+  // total cell of chess board
+  let chessTotal = chessRow * chessRow;
+  // number of player and their signs
+  let players = [
+    {
+      type: 1,
+      sign: '⭕️',
+    },
+    {
+      type: 2,
+      sign: '❌',
+    }
+  ];
+  // current player type
+  let curPlayerNum = 0;
+  // initiate chess board data
+  let chessBoard = new Array(chessTotal).fill(0) 
+  
+  // let chessBoard = [
+  //   0, 0, 0, 0, 0,
+  //   0, 0, 0, 0, 0,
+  //   0, 0, 0, 0, 0,
+  //   0, 0, 0, 0, 0,
+  //   0, 0, 0, 0, 0,
+  // ];
+
+  function drawBoard() {
+    let board = document.getElementById('board');
+
+    var childs = board.childNodes; 
+    for(var i = childs .length - 1; i >= 0; i--) {
+      board.removeChild(childs[i]);
+    }
+    
+    for (let i = 0; i < chessRow; i++) {
+      let row = document.createElement('div');
+      board.appendChild(row);
+      for (let j = 0; j < chessRow; j++) {
+        let cell = document.createElement('div');
+        let pos = i * chessRow + j
+        cell.classList.add('cell');
+        cell.innerText = fillCell(chessBoard[pos]);
+
+        /* add listener to draw chess */
+        cell.addEventListener('click', () => move(cell, pos));
+        row.appendChild(cell);
+      }
+    }
+  }
+
+  function fillCell(type) {
+    for (let i = 0; i < players.length; i++) {
+      if (type === players[i].type) {
+        return players[i].sign;
+      }
+    }
+    return ' '
+  }
+
+  function nextPlayerNum(cur) {
+    if (cur < (players.length-1)) {
+      return cur + 1;
+    } else {
+      return 0;
+    }
+  }
+
+  function move(cell, pos) {
+    let curPlayer = players[curPlayerNum];
+    cell.innerText = fillCell(curPlayer.type);
+    chessBoard[pos] = curPlayer.type;
+    // keep curPlayer for checkWin
+    if (checkWin(chessBoard, pos)) {
+      let result = document.getElementById('result');
+      result.innerText = curPlayer.sign + ' win!';
+    }
+
+    // change players
+    curPlayerNum = nextPlayerNum(curPlayerNum);
+    curPlayer = players[curPlayerNum];
+
+    // console.log(bestChioce(chessBoard, curPlayerNum));
+    if (chessRow < 4) {
+      computerMove();
+    }
+    // if (willWin(chessBoard, curPlayerNum)) {
+    //   let result = document.getElementById('result');
+    //   result.innerText = curPlayer.sign + 'will win!'
+    // }
+  }
+
+  function checkWin(board, pos) {
+    let curType = board[pos];
+    let row = Math.floor(pos/chessRow);
+    let col = pos%chessRow;
+
+    // check row
+    let beginRowPos = row*chessRow;
+    let endRowPos = (row+1)*chessRow - 1;
+    let offset = 1-chessWinNum;
+    for (let loop = 0; loop < chessWinNum; loop++) {
+      let count = 0;
+      let beginChessPos = pos+offset;
+      let endChessPos = pos+offset+chessWinNum - 1;
+      // check if this case is valid
+      if ((beginChessPos >= beginRowPos) && (endChessPos <= endRowPos)) {
+        // step = 1
+        for (let cur = beginChessPos; cur <= endChessPos; cur++) {
+          if (board[cur] !== curType) {
+            break;
+          } else {
+            count += 1;
+            if (count === chessWinNum) {
+              return true;
+            }
+          }
+        }
+      }
+      offset += 1;
+    }
+
+    // check col
+    let beginColPos = col;
+    let endColPos = chessRow*(chessRow-1) + col;
+    offset = 1-chessWinNum;
+    for (let loop = 0; loop < chessWinNum; loop++) {
+      let count = 0
+      let beginChessPos = pos+offset*chessRow;
+      let endChessPos = pos+(offset+chessWinNum - 1)*chessRow;
+      // check if this case is valid
+      if ((beginChessPos >= beginColPos) && (endChessPos <= endColPos)) {
+        // step = chessRow
+        for (let cur = beginChessPos; cur <= endChessPos; cur=cur+chessRow) {
+          if (board[cur] !== curType) {
+            break;
+          } else {
+            count += 1;
+            if (count === chessWinNum) {
+              return true;
+            }
+          }
+        }
+      }
+      offset += 1;
+    }
+    
+    // check top-down slash
+    let beginSlashPos = 0;
+    let endSlashPos = chessRow * chessRow - 1;
+    offset = 1-chessWinNum;
+    for (let loop = 0; loop < chessWinNum; loop++) {
+      let count = 0
+      let beginChessPos = pos+offset*(chessRow+1);
+      let endChessPos = pos+(offset+chessWinNum - 1)*(chessRow+1);
+      // check if this case is valid
+      if ((beginChessPos >= beginSlashPos) && (endChessPos <= endSlashPos)) {
+        // step = chessRow+1
+        for (let cur = beginChessPos; cur <= endChessPos; cur=cur+chessRow+1) {
+          if (board[cur] !== curType) {
+            break;
+          } else {
+            count += 1;
+            if (count === chessWinNum) {
+              return true;
+            }
+          }
+        }
+      }
+      offset += 1;
+    }
+
+
+    // check bottom-up slash
+    beginSlashPos = chessRow-1;
+    endSlashPos = chessRow * (chessRow - 1);
+    offset = 1-chessWinNum;
+    for (let loop = 0; loop < chessWinNum; loop++) {
+      let count = 0
+      let beginChessPos = pos+offset*(chessRow-1);
+      let endChessPos = pos+(offset+chessWinNum - 1)*(chessRow-1);
+      // check if this case is valid
+      if ((beginChessPos >= beginSlashPos) && (endChessPos <= endSlashPos)) {
+        // step = chessRow-1
+        for (let cur = beginChessPos; cur <= endChessPos; cur=cur+chessRow-1) {
+          if (board[cur] !== curType) {
+            break;
+          } else {
+            count += 1;
+            if (count === chessWinNum) {
+              return true;
+            }
+          }
+        }
+      }
+      offset += 1;
+    }
+  }
+
+  function clone(board) {
+    // return Object.create(board);
+    return JSON.parse(JSON.stringify(board));
+  }
+
+  function willWin(board, playerNum) {
+    for (let i = 0; i < chessRow; i++) {
+      for (let j = 0; j < chessRow; j++) {
+        if (board[i*chessRow + j]) {
+          continue;
+        }
+
+        let cpChessBoard = clone(board);
+        cpChessBoard[i*chessRow + j] = players[playerNum].type;
+        if(checkWin(cpChessBoard, i*chessRow + j)) {
+          return [i, j];
+        }
+      }
+    }
+    return null;
+  }
+
+  function bestChioce(board, playerNum) {
+    let point = willWin(board, playerNum);
+    if (point) {
+      return {
+        point,
+        score: 1
+      };
+    }
+
+    let score = -1;
+    outer: for (let i = 0; i < chessRow; i++) {
+      for (let j = 0; j < chessRow; j++) {
+        if (board[i*chessRow + j]) {
+          continue;
+        }
+
+        let cpChessBoard = clone(board);
+        cpChessBoard[i*chessRow + j] = players[playerNum].type;
+        // change players, then get score
+        let choice = bestChioce(cpChessBoard, nextPlayerNum(playerNum));
+        if (-choice.score >= score) {
+          point = [i, j];
+          score = -choice.score;
+        }
+        if (score === 1) {
+          break outer;
+        }
+      }
+    }
+    return {
+      point,
+      score: point ? score : 0
+    }
+  }
+
+  function computerMove() {
+    let choice = bestChioce(chessBoard, curPlayerNum);
+    if (choice.point) {
+      chessBoard[choice.point[0] * chessRow + choice.point[1]] = players[curPlayerNum].type;
+    }
+    if (checkWin(chessBoard, choice.point[0] * chessRow + choice.point[1])) {
+      let result = document.getElementById('result');
+      result.innerText = players[curPlayerNum].sign + ' win!';
+    }
+    curPlayerNum = nextPlayerNum(curPlayerNum);
+    drawBoard();
+  }
+
+  drawBoard();
+  // console.log(bestChioce(chessBoard, 0));
+</script>

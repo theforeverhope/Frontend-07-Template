@@ -1,0 +1,112 @@
+<style>
+  .light {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    background: lightgray;
+    border-radius: 50px;
+    margin: 30px;
+  }
+</style>
+
+<div id="lights"></div>
+<button onclick="stop()">Stop</button>
+<button onclick="start()">Start</button>
+
+<script type="text/javascript">
+  let isStop = false;
+  let defaultColor = 'darkgrey';
+  let lightsConfig = [
+    {
+      name: 'green',
+      color: 'green',
+      duration: 1000
+    },
+    {
+      name: 'yellow',
+      color: 'gold',
+      duration: 500
+    },
+    {
+      name: 'red',
+      color: 'red',
+      duration: 200
+    },
+    // {
+    //   name: 'blue',
+    //   color: 'blue',
+    //   duration: 2000
+    // }
+  ];
+
+  function uuid() {
+    var temp_url = URL.createObjectURL(new Blob());
+    var uuid = temp_url.toString(); 
+    URL.revokeObjectURL(temp_url);
+    return uuid.substr(uuid.lastIndexOf("/") + 1);
+  }
+
+
+	function open(light) {
+    let lights = document.getElementsByClassName('light');
+    for (let i = 0; i < lights.length; i++) {
+      lights[i].setAttribute('style', '');
+    }
+    document.getElementById(light.name).setAttribute('style', 'background: ' + light.color);
+  }
+
+  function sleep(time) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, time);
+    });
+  }
+
+  function stop() {
+    isStop = true;
+  }
+
+  function start() {
+    isStop = false;
+    openTrafficLights(lightsConfig);
+  }
+
+  function drawLights(lightsConfig) {
+    let container = document.getElementById('lights');
+    container.innerHtml = '';
+    if (!Array.isArray(lightsConfig)) {
+      alert('Lights config error!');
+      return;
+    }
+
+    for (let i = 0; i < lightsConfig.length; i++) {
+      let light = document.createElement('div');
+      let config = lightsConfig[i];
+      if (!config?.name) {
+        config.name = uuid();
+      }
+      if (!config?.color) {
+        config.coloe = defaultColor;
+      }
+      light.setAttribute('id', config.name);
+      light.setAttribute('class', 'light');
+      container.appendChild(light);
+    }
+  }
+
+  async function openTrafficLights(lightsConfig) {
+    while(!isStop) {
+      if (!Array.isArray(lightsConfig)) {
+        alert('Lights config error!');
+        return;
+      }
+      for (let i = 0; i < lightsConfig.length; i++) {
+        let light = lightsConfig[i];
+        open(light);
+        await sleep(light?.duration || 100);
+      }
+    }
+  }
+
+  drawLights(lightsConfig);
+  openTrafficLights(lightsConfig);
+</script>
