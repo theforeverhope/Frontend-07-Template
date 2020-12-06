@@ -3,7 +3,7 @@
 ## HTML标签计数
 
 - 数据源：https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element
-- 策略：观察到列表每一行有一个HTML元素，则可计算行数。但<code><h1></code>, <code><h2></code>, <code><h3></code>, <code><h4></code> <code><h5></code>, <code><h6></code>共用一行则筛选结果要增加5。
+- 策略：观察到列表每一行有一个HTML元素，则可计算行数。但 h1、h2、h3、h4、h5、h6 共用一行则筛选结果要增加5。
 - 代码：
 ```javascript
 let tbs = document.getElementsByTagName('tbody');
