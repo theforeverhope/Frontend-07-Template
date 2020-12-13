@@ -1,0 +1,188 @@
+
+<style>
+  .cell {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background-color: lightgray;
+    border: 1px solid gray;
+  }
+</style>
+
+<div id="container"></div>
+<button onclick="saveMap()">Save</button>
+<button onclick="clearComputedDataInMap()">Clear Computed Data</button>
+
+<script type="text/javascript">
+  let rowNum = 100;
+  let map = localStorage['map'] ? JSON.parse(localStorage['map']) : Array(rowNum*rowNum).fill(0);
+  let mousedown = false;
+  let clear = false;
+
+  document.addEventListener("mousedown", e => {
+    mousedown = true;
+    clear = (e.which === 3);
+  });
+
+  document.addEventListener("mouseup", () => {
+    mousedown = false;
+  });
+
+  document.addEventListener("contextmenu", e => e.preventDefault());
+
+  class Sorted {
+    constructor(data, compare) {
+      this.data = data.slice();
+      this.compare = compare || ((a, b) => a - b);
+    }
+
+    take() {
+      if (!this.data.length) {
+        // return undefined not null, because null will be compared
+        return;
+      }
+
+      let min = this.data[0];
+      let minIndex = 0;
+
+      for (let i = 0; i<this.data.length; i++) {
+        if (this.compare(this.data[i], min) < 0) {
+          min = this.data[i];
+          minIndex = i;
+        }
+      }
+
+      this.data[minIndex] = this.data[this.data.length -1];
+      this.data.pop();
+      return min;
+    }
+
+    give(val) {
+      this.data.push(val);
+    }
+
+    get length() {
+      return this.data.length;
+    } 
+  }
+
+  function saveMap() {
+    localStorage['map'] = JSON.stringify(map);
+  }
+
+  function clearComputedDataInMap() {
+    map = map.map(point => {
+      if (point === 2) {
+        return 0;
+      } else {
+        return point;
+      }
+    })
+  }
+
+  function sleep(time) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, time);
+    });
+  }
+
+  function drawMap(map, start, end) {
+    let container = document.getElementById("container");
+
+    for (let y = 0; y < rowNum; y++) {
+      let row = document.createElement("div");
+      container.append(row);
+      for (let x = 0; x < rowNum; x++) {
+        let cell = document.createElement("div");
+        cell.classList.add("cell");
+        
+        if (x === start[0] && y === start[1]) {
+          // draw start point
+          cell.setAttribute("style", "background-color: green");
+        } else if (x === end[0] && y === end[1]) {
+          // draw end point
+          cell.setAttribute("style", "background-color: red");
+        } else if (map[y*100 + x] === 1) {
+          // draw block point
+          cell.setAttribute("style", "background-color: black");
+        }
+
+        cell.addEventListener("mousemove", () => {
+          if (mousedown) {
+            if (clear) {
+              cell.setAttribute("style", "background-color: lightgray");
+              map[y*100 + x] = 0;
+            } else {
+              cell.setAttribute("style", "background-color: black");
+              map[y*100 + x] = 1;
+            }
+          }
+        })
+        row.append(cell);
+      }
+    }
+  }
+
+  function distance(point, target) {
+    return (point[0] - target[0]) ** 2 + (point[1] - target[1]) ** 2;
+  }
+
+  async function findPath(map, start, end) {
+    let pathMap = JSON.parse(JSON.stringify(map));
+    // start = [x, y]
+    let queue = new Sorted([start], (a, b) => distance(a, end) - distance(b, end));
+    let container = document.getElementById("container");
+
+    async function insert(x, y, pre) {
+      if (x<0 || x>=rowNum || y<0 || y>=rowNum) {
+        return;
+      }
+
+      if (pathMap[y*100 + x]) {
+        return;
+      }
+
+      // await sleep(1);
+      if ((x !== start[0] || y !== start[1]) && (x !== end[0] || y !== end[1])) {
+        container.children[y].children[x].setAttribute("style", "background-color: lightgreen");
+      }
+      if (x !== start[0] || y !== start[1]) {
+        pathMap[y*100 + x] = pre;
+      }
+      queue.give([x, y]);
+    } 
+
+    while(queue.length) {
+      // if queue.pop() then is deep-first search, and data array is queue;
+      // if queue.shift() then is breadth-first search, and data array is stack;
+      let [x, y] = queue.take();
+
+      if (x === end[0] && y === end[1]) {
+        let path = [];
+        while (x!== start[0] || y!== start[1]) {
+          path.push(y*100 + x);
+          [x, y] = pathMap[y*100 + x];
+          await sleep(5);
+          container.children[y].children[x].setAttribute("style", "background-color: orange");
+        }
+        return path;
+      }
+      await insert(x-1, y, [x, y]);
+      await insert(x, y-1, [x, y]);
+      await insert(x+1, y, [x, y]);
+      await insert(x, y+1, [x, y]);
+
+      // not allow to go oblique path
+      await insert(x-1, y-1, [x, y]);
+      await insert(x+1, y-1, [x, y]);
+      await insert(x-1, y+1, [x, y]);
+      await insert(x+1, y+1, [x, y]);
+
+    }
+
+    return null;
+  }
+
+  drawMap(map, [0,0], [80,50]);
+  console.log(findPath(map, [0,0], [80,50]));
+</script>
