@@ -1,0 +1,61 @@
+<script>
+function wildcard(source, pattern) {
+  // find the sum of star in pattern
+  let starCount = 0;
+  for (let i = 0; i < pattern.length; i++) {
+    if (pattern[i] === "*")
+      starCount++;
+  }
+
+  // if starCount === 0, then the whole pattern should equal to source except for '?' mark
+  if (starCount === 0) {
+    for (let i = 0; i < pattern.length; i++) {
+      if (pattern[i] !== source[i] && pattern[i] !== "?")
+        return false;
+    }
+    return true;
+  }
+
+  let i = 0; // index of pattern
+  let lastIndex = 0; // index of the last compared position
+
+  // compare the beginning part before the first * mark
+  for (i = 0; pattern[i] !== "*"; i++) {
+    if (pattern[i] !== source[i] && pattern[i] !== "?")
+        return false;
+  }
+
+  // compare the sections begin with * mark
+
+  lastIndex = i; // the first section begin with the last index of beginning part
+  for (let s = 0; s < starCount - 1; s++) {
+    i++; // get next character after previous section
+    let subPattern = "";
+    while(pattern[i] !== "*") {
+      subPattern += pattern[i];
+      i++;
+    }
+
+    // replace ? in subPattern with /s and /S to create regexp to match source 
+    let reg = new RegExp(subPattern.replace(/\?/g, "[\\s\\S]"), "g");
+    reg.lastIndex = lastIndex;
+
+    if (!reg.exec(source))
+      return false;
+
+    lastIndex = reg.lastIndex;
+  }
+
+  // compare the ene part after the last * mark
+  for (j = lastIndex+1; j < pattern.length && pattern[j] !== "*"; j++) {
+    if (pattern[j] !== source[j] && pattern[j] !== "?")
+        return false;
+  }
+
+  return true;
+}
+
+console.log(wildcard("abcabcabxaac", "a*b*bx*c"));
+console.log(wildcard("abcabcabxaac", "a*b*b?x*c"));
+
+</script>

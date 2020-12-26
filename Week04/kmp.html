@@ -1,0 +1,49 @@
+<script>
+function kmp(source, pattern) {
+	// computed table
+	let table = new Array(pattern.length).fill(0);
+
+  { // find duplicated substring
+    let i = 1, // pattern index, if i = 0 then will always return whole pattern, cus pattern === pattern
+        j = 0  // duplicated characters' sum
+
+    while(i < pattern.length) {
+      if (pattern[i] === pattern[j]) {
+        ++i, ++j;
+        table[i] = j;
+      } else {
+        if (j > 0) { // if j === 0, then just move i to next index to avoid loop
+          j = table[j];
+        } else {
+          ++i;
+        }
+      }
+    }
+  }
+  // console.log('table', table);
+
+  { // match
+    let i = 0, // source index
+        j = 0  // pattern index
+
+    while(i < source.length) {
+      if (pattern[j] === source[i]) {
+        ++j, ++i;
+      } else {
+        if (j > 0) 
+          j = table[j];
+        else
+          ++i;
+      }
+
+      if (j === pattern.length) 
+        return true
+    }
+    return false;
+  }
+}
+
+console.log(kmp("skdsabcessidcc", "abceksid"));
+console.log(kmp("skdsabceksidcc", "abceksid"));
+
+</script>
