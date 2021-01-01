@@ -1,0 +1,98 @@
+<input id="r" type="range" min=0 max=255 />
+<input id="g" type="range" min=0 max=255 />
+<input id="b" type="range" min=0 max=255 />
+<div id="color" style="width: 100px; height: 100px;"></div>
+
+<script type="text/javascript">
+  // let callbacks = []; // collected dependance of all 
+  let callbacks = new Map(); // collected dependance
+  let usedReactivities = []; // collected the dependance of a single callback
+  let reactities = new Map(); // collected reactive objects
+
+  // let originalObj = {
+  //   a: 1,
+  //   b: {c: 3},
+  // };
+
+  let originalObj = {
+    r: 1,
+    g: 2,
+    b: 3
+  }
+
+  let reactiveObj = reactive(originalObj);
+
+  effect(() => {
+    document.getElementById("color").style.backgroundColor = `rgb(${reactiveObj.r}, ${reactiveObj.g}, ${reactiveObj.b})`;
+  });
+
+  effect(() => {
+    document.getElementById("r").value = reactiveObj.r; // set value of input r to originalObj.r 
+    document.getElementById("g").value = reactiveObj.g;
+    document.getElementById("b").value = reactiveObj.b;
+  });
+
+  document.getElementById("r").addEventListener('input', event => reactiveObj.r = event.target.value); // set originalObj.r to value of input
+  document.getElementById("g").addEventListener('input', event => reactiveObj.g = event.target.value);
+  document.getElementById("b").addEventListener('input', event => reactiveObj.b = event.target.value);
+
+  // effect(() => {
+  //   console.log('effect a: ', reactiveObj.a) // define dependance
+  // });
+
+  // effect(() => {
+  //   console.log('effect b: ', reactiveObj.b) // define dependance
+  // });
+
+  // effect(() => {
+  //   console.log('effect reactiveObj: ', reactiveObj) // define dependance
+  // });
+
+  function effect(callback) {
+    // callbacks.push(callback); // collect dependance
+    usedReactivities = [];
+    callback(); // trigger get to register usedReactivities
+    
+    for (let reactity of usedReactivities) {
+      if (!callbacks.has(reactity[0]))
+        callbacks.set(reactity[0], new Map()); // cus we need to collect dependance of its attributes
+      if (!callbacks.get(reactity[0]).has(reactity[1]))
+        callbacks.get(reactity[0]).set(reactity[1], []); // can be Array/Set/Map
+      callbacks.get(reactity[0]).get(reactity[1]).push(callback);
+    }
+  }
+
+  function reactive(object) {
+    if (reactities.has(object))
+      return reactities.get(object);
+
+    let proxy = new Proxy(object, {
+      set(obj, prop, val) {
+        // console.log('reactive set', obj, prop, val)
+        obj[prop] = val; // set value first, then call dependance update
+
+        // for (let cb of callbacks) {
+        //   cb(); // call dependance
+        // }
+
+        if (callbacks.get(obj) && callbacks.get(obj).get(prop))
+          for (let cb of callbacks.get(obj).get(prop)) {
+            cb();
+          }
+        return obj[prop];
+      },
+      get(obj, prop) {
+        // console.log('reactive get', obj, prop, obj[prop])
+        usedReactivities.push([obj, prop]); // register the dependance of callback to usedReactivities
+
+        if (typeof obj[prop] === 'object')
+          return reactive(obj[prop]); // define nesting reactive object
+        
+        return obj[prop];
+      }
+    });
+
+    reactities.set(object, proxy); // collect reactive objects
+    return proxy;
+  }
+</script>
