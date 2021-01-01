@@ -2,11 +2,11 @@
 
 ## Reactive 响应式实现原理
 
-reactiveObject.set -(trigger)-> dependance update(call callbacks registered by effect using new value)
-reactiveObject.get -(collect)-> dependance(single callback of reactiveObject use useReactivities)
-effect -(call)-> reactiveObject.get -(collect)-> dependance(register callbacks)
+reactiveObject.set -(trigger)-> dependance update(call callbacks registered by effect using new value)<br> 
+reactiveObject.get -(collect)-> dependance(single callback of reactiveObject use useReactivities)<br> 
+effect -(call)-> reactiveObject.get -(collect)-> dependance(register callbacks)<br> 
 
-- 生成响应式对象，捕捉对象读取和赋值操作
+- 生成响应式对象，捕捉对象读取和赋值操作 <br> 
 ```javascript
   let originalObj = {}
   let reactiveObj = new Proxy(originalObj, {
@@ -19,19 +19,19 @@ effect -(call)-> reactiveObject.get -(collect)-> dependance(register callbacks)
     }
   })
 ```
-  VUE 3.0[使用 Proxy:[https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy]]
-  1) Proxy 针对整个data对象，而不是data对象的某个属性。
-  2）Proxy 支持数组，不需要对数组的方法进行重载。
+  VUE 3.0[使用 Proxy:[https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy]]<br> 
+  1) Proxy 针对整个data对象，而不是data对象的某个属性。<br> 
+  2）Proxy 支持数组，不需要对数组的方法进行重载。<br> 
 
-  VUE 2.0[使用 defineProperty:[https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty]]
-  1）defineProperty 不能监听数组的变化，需要重写数组方法来实现数组的劫持。
-  2）defineProperty 必须遍历对象的每个属性，配合Object.keys()
-  3）VUE 2.0 无法监听未在data里声明的属性
-  例如：对于未在data里声明的属性，没有通过defineProperty注册对于该属性的监听，从而属性的依赖不会更新。
-  方案：需要手动调用注册新的对象监听this.$set(obj, prop, val)。
+  VUE 2.0[使用 defineProperty:[https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty]]<br> 
+  1）defineProperty 不能监听数组的变化，需要重写数组方法来实现数组的劫持。<br> 
+  2）defineProperty 必须遍历对象的每个属性，配合Object.keys()<br> 
+  3）VUE 2.0 无法监听未在data里声明的属性<br> 
+  例如：对于未在data里声明的属性，没有通过defineProperty注册对于该属性的监听，从而属性的依赖不会更新。<br> 
+  方案：需要手动调用注册新的对象监听this.$set(obj, prop, val)。<br> 
 
-- 为响应式对象绑定依赖关系
-  定义全局变量收集依赖关系，并在对象属性变化的时候（执行set），触发依赖响应（执行callback）。
+- 为响应式对象绑定依赖关系 <br> 
+  定义全局变量收集依赖关系，并在对象属性变化的时候（执行set），触发依赖响应（执行callback）。<br> 
 ```javascript
   let callbacks = []; // collected dependance
   
@@ -58,12 +58,12 @@ effect -(call)-> reactiveObject.get -(collect)-> dependance(register callbacks)
     }
   })
 ```
-  问题：对象的任意属性改变都会触发该对象每一个属性所绑定的依赖，即依赖没有和相应属性建立单独对应的绑定关系。会产生性能问题。
+  问题：对象的任意属性改变都会触发该对象每一个属性所绑定的依赖，即依赖没有和相应属性建立单独对应的绑定关系。会产生性能问题。<br> 
 
-- 分别为对象的不同属性绑定对应的依赖
-  利用Map存储依赖，key为属性，value为依赖数组。
-  利用callback的执行会获取其依赖对象的属性的特性，在属性的get方法里收集依赖。
-  属性set触发更新，则执行该属性对应的依赖响应。
+- 分别为对象的不同属性绑定对应的依赖 <br> 
+  利用Map存储依赖，key为属性，value为依赖数组。<br> 
+  利用callback的执行会获取其依赖对象的属性的特性，在属性的get方法里收集依赖。<br> 
+  属性set触发更新，则执行该属性对应的依赖响应。<br> 
 ```javascript
   let callbacks = new Map(); // collected dependance
   let usedReactivities = []; // collected the dependance of a single callback
@@ -102,10 +102,10 @@ effect -(call)-> reactiveObject.get -(collect)-> dependance(register callbacks)
     });
   }
 ```
-  问题：无法处理嵌套对象的响应式依赖注册，例如reactiveObj.a.c = 9，无法触发响应。
+  问题：无法处理嵌套对象的响应式依赖注册，例如reactiveObj.a.c = 9，无法触发响应。<br> 
 
-- 将嵌套对象也生成响应式
-  缓存响应式对象集合。
+- 将嵌套对象也生成响应式<br> 
+  缓存响应式对象集合。<br> 
 ```javascript
   let reactities = new Map(); // collected reactive objects
 
@@ -141,7 +141,7 @@ effect -(call)-> reactiveObject.get -(collect)-> dependance(register callbacks)
   }
 ```
 
-- 双向绑定
+- 双向绑定<br> 
 
 ```html
 <input id="r" />
@@ -157,12 +157,12 @@ effect -(call)-> reactiveObject.get -(collect)-> dependance(register callbacks)
 
 ## Dragable 不脱离文档流的拖动效果实现
 
-- 利用 mousedown mousemove mouseup 实现拖动效果。
-  mousedown：记录拖动的起始位置，并注册 mousemove mouseup  事件。
-  mousemove：利用transform:translate(x,y)来实现拖动效果。
-  mouseup：记录拖动的终点，即下一次拖动的起始位置，并注销 mousemove mouseup 事件。
+- 利用 mousedown mousemove mouseup 实现拖动效果。<br> 
+  mousedown：记录拖动的起始位置，并注册 mousemove mouseup  事件。<br> 
+  mousemove：利用transform:translate(x,y)来实现拖动效果。<br> 
+  mouseup：记录拖动的终点，即下一次拖动的起始位置，并注销 mousemove mouseup 事件。<br> 
 
-- 将文档逐字划分 Range ，并计算离 mousemove 当前位置最近的文字节点。
-  Range:[https://developer.mozilla.org/zh-CN/docs/Web/API/Range]
+- 将文档逐字划分 Range ，并计算离 mousemove 当前位置最近的文字节点。<br> 
+  Range:[https://developer.mozilla.org/zh-CN/docs/Web/API/Range]<br> 
 
-- 在离 mousemove 当前位置最近的文字节点后插入拖动的对象。
+- 在离 mousemove 当前位置最近的文字节点后插入拖动的对象。<br> 
