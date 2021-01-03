@@ -42,6 +42,17 @@
 - Undefined: 表示没有定义的变量，不是关键字，可以被重新定义，可以用 void 0替代。
 - Symbol: 只能够通过变量去引用，无法仅根据名字引用。从而实现属性访问的权限控制。
 
+parseInt(num,8);   //八进制转十进制
+parseInt(num,16);   //十六进制转十进制
+parseInt(num).toString(8)  //十进制转八进制
+parseInt(num).toString(16)   //十进制转十六进制
+parseInt(num,2).toString(8)   //二进制转八进制
+parseInt(num,2).toString(16)  //二进制转十六进制
+parseInt(num,8).toString(2)   //八进制转二进制
+parseInt(num,8).toString(16)  //八进制转十六进制
+parseInt(num,16).toString(2)  //十六进制转二进制
+parseInt(num,16).toString(8)  //十六进制转八进制
+
 ## 特殊对象
 
 - Function: 当标识符后跟着()时，会尝试调用对象的[[ call ]]属性进行方法调用。
