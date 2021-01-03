@@ -1,0 +1,34 @@
+<script>
+
+// When design state and action of a Object
+// we obey the rule that "Action change state"
+
+class Dog {
+  constructor() {
+    this.attackDamage = {
+      bite: 2,
+      scratch: 1,
+    }
+  }
+  
+  attack(type) {
+    return this.attackDamage[type];
+  }
+}
+
+class Human {
+  constructor() {
+    this.healthLevel = 10; 
+  }
+  
+  hurt(damage) {
+    this.healthLevel = this.healthLevel - damage;
+  }
+}
+
+
+let dog = new Dog();
+let human = new Human();
+// dog bite human
+human.hurt(dog.attack("bite"));
+</script>
