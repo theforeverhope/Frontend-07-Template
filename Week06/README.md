@@ -10,9 +10,9 @@
 ## 编程语言性质
 
 - 图灵完备性
-  1）命令式-图灵机
-     goto | if 和 while
-  2）声明式-lambda
+  1）命令式-图灵机<br>
+     goto | if 和 while<br>
+  2）声明式-lambda<br>
 
 ## 一般命令式编程语言的设计方式
 
