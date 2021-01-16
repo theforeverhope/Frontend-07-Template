@@ -41,6 +41,7 @@
 - Boxing<br>
 
 |   类型   |           对象          |      值      |
+|  ----   |           ----          |     ----    |
 | Number  | new Number(1)           |      1      |
 | String  | new String("a")         |     'a'     |
 | Boolean | new Boolean(true)       |    true     |
