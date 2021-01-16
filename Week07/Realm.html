@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<!-- Data Source: https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects -->
+<head>
+  <meta charset='UTF-8'>
+  <title>Realm Object</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script src="https://gw.alipayobjects.com/os/lib/antv/g6/4.1.1/dist/g6.min.js"></script>
+  <script>
+    const data = {
+        id: "Realm Object",
+        children: [
+          {
+            id: "Basic Object",
+            children: [
+              { id: "Object" },
+              { id: "Function" },
+              { id: "Boolean" },
+              { id: "Symbol" },
+            ]
+          },
+          {
+            id: "Error Object",
+            children: [
+              { id: "Error" },
+              { id: "AggregateError" },
+              { id: "EvalError" },
+              { id: "InternalError" },
+              { id: "RangeError" },
+              { id: "ReferenceError" },
+              { id: "TypeError" },
+              { id: "URIError" },
+            ]
+          },
+          {
+            id: "Math & Date Object",
+            children: [
+              { id: "Number" },
+              { id: "BigInt" },
+              { id: "Math" },
+              { id: "Date" },
+            ]
+          },
+          {
+            id: "String Object",
+            children: [
+              { id: "String" },
+              { id: "RegExp" },
+            ]
+          },
+          {
+            id: "Collection Object with index",
+            children: [
+              { id: "Array" },
+              { id: "Int8Array" },
+              { id: "Uint8Array" },
+              { id: "Uint8ClampedArray" },
+              { id: "Int16Array" },
+              { id: "Uint16Array" },
+              { id: "Int32Array" },
+              { id: "Uint32Array" },
+              { id: "Float32Array" },
+              { id: "Float64Array" },
+              { id: "BigInt64Array" },
+              { id: "BigUint64Array" }
+            ]
+          }, 
+          {
+            id: "Collection Object with key",
+            children: [
+              { id: "Map" },
+              { id: "Set" },
+              { id: "WeakMap" },
+              { id: "WeakSet" },
+            ]
+          },
+          {
+            id: "Structured Data",
+            children: [
+              { id: "ArrayBuffer" },
+              { id: "SharedArrayBuffer" },
+              { id: "Atomics" },
+              { id: "DataView" },
+              { id: "JSON"}, 
+            ]
+          },
+          {
+            id: "Reflect Object",
+            children: [
+              { id: "Reflect" },
+              { id: "Proxy" },
+            ]
+          }
+        ]
+      };
+    const containerId = 'root';
+    const container = document.getElementById(containerId);
+    const width = container.scrollWidth;
+    const height = container.scrollHeight || 500;
+    const graph = new G6.TreeGraph({
+      container: containerId,
+      width,
+      height,
+      modes: {
+        default: [
+          {
+            type: 'collapse-expand',
+            onChange: function onChange(item, collapsed) {
+              const data = item.getModel();
+              data.collapsed = collapsed;
+              return true;
+            },
+          },
+          'drag-canvas',
+          'zoom-canvas',
+        ],
+      },
+      defaultNode: {
+        size: 26,
+        anchorPoints: [
+          [0, 0.5],
+          [1, 0.5],
+        ],
+      },
+      defaultEdge: {
+        type: 'cubic-horizontal',
+      },
+      layout: {
+        type: 'compactBox',
+        direction: 'LR',
+        getId: function getId(d) {
+          return d.id;
+        },
+        getHeight: function getHeight() {
+          return 16;
+        },
+        getWidth: function getWidth() {
+          return 16;
+        },
+        getVGap: function getVGap() {
+          return 10;
+        },
+        getHGap: function getHGap() {
+          return 100;
+        },
+      },
+    });
+
+    graph.node(function (node) {
+      return {
+        label: node.id,
+        labelCfg: {
+          offset: 10,
+          position: node.children && node.children.length > 0 ? 'left' : 'right',
+        },
+      };
+    });
+
+    graph.data(data);
+    graph.render();
+    graph.fitView();
+
+    if (typeof window !== 'undefined')
+      window.onresize = () => {
+        if (!graph || graph.get('destroyed')) return;
+        if (!container || !container.scrollWidth || !container.scrollHeight) return;
+        graph.changeSize(container.scrollWidth, container.scrollHeight);
+      };
+  </script>
+</body>
+
+</html>

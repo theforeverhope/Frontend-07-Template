@@ -1,0 +1,74 @@
+<script>
+function StringToNumber(value) {
+  if (typeof value !== 'string') return '不是字符串'
+  /**
+   * 超出 Number.MAX_SAFE_INTEGER (Javascript 中最大的安全整数 (2^53-1))和
+   *     Number.MIN_SAFE_INTEGER (Javascript 中最小的安全整数 -(2^53-1))的数字
+   *     直接用Number转换会不准确，借助BigInt来判断
+   */
+  if (value.lenght > 16) {
+    if (BigInt(value) > BigInt(9007199254740991)) {
+      return value + '超出限制';
+    }
+    if (BigInt(value) < BigInt(-9007199254740991)) {
+      return value + '超出限制';
+    }
+  }
+
+  // 处理空字符串
+  if (value.length === 0) {
+    return 0;
+  }
+  // 十六进制
+  if (/0[xX][0-9a-fA-F]+/.test(value)) {
+    return parseInt(value.substring(2), 16)
+  }
+  // 八进制
+  if (/0o[0-7]+/.test(value)) {
+    return parseInt(value.substring(2), 8)
+  }
+  // 二进制
+  if (/0b[0-1]+/.test(value)) {
+    return parseInt(value.substring(2), 2)
+  }
+  // 十进制浮点数
+  if (/([0-9]*[\.]?[0-9]+)|([0-9]+[\.]?[0-9]*e[+|-]*[0-9]+)/.test(value)) {
+    return parseFloat(value, 10)
+  }
+  
+  else return '格式错误，无法转换！'
+}
+
+function NumberToString(value, radix = 10) {
+  if (Number.isInteger(value) && !Number.isSafeInteger(value)) {
+    return value + '超出限制'
+  }
+  return value.toString(radix)
+}
+
+console.log('---------- String To Number --------')
+console.log(StringToNumber(new String('test')));
+console.log(StringToNumber('123'));
+console.log(StringToNumber('2.'));
+console.log(StringToNumber('.1'));
+
+console.log(StringToNumber(''));
+console.log(StringToNumber('0'));
+console.log(StringToNumber('+0'));
+console.log(StringToNumber('-0'));
+
+console.log(StringToNumber('0x41AF'));
+console.log(StringToNumber('0o2222'));
+console.log(StringToNumber('0b100000000'));
+
+console.log(StringToNumber('2.048e3'));
+console.log(StringToNumber('2.048e-3'));
+
+console.log('---------- Number To String --------')
+console.log(NumberToString(0x41AF));
+console.log(NumberToString(0o2222));
+console.log(NumberToString(0b100000000));
+
+
+
+</script>
