@@ -23,12 +23,13 @@ class Request {
   }
 
   // construct request content
+  // each line can not has space in the front of line!!!
   toString() {
     return `${this.method} ${this.path} HTTP/1.1\r
-    ${Object.keys(this.headers).map(key => `${key}: ${this.headers[key]}`).join("\r\n")}\r
-    \r
-    ${this.bodyText}
-    `;
+${Object.keys(this.headers).map(key => `${key}: ${this.headers[key]}`).join("\r\n")}\r
+\r
+${this.bodyText}
+`;
   }
 
   send(connection) {
@@ -39,16 +40,11 @@ class Request {
         connection.write(this.toString());
       } else {
         // if has not connection, then create one to send request content.
-        console.log('create connection:', {
-          host: this.host,
-          port: this.port
-        })
         connection = net.createConnection({
           host: this.host,
           port: this.port
         }, () => {
           console.log('Client Connected!');
-          console.log('write', this.toString())
           connection.write(this.toString());
         });
       }

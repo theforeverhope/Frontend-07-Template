@@ -106,18 +106,20 @@ void async function () {
   支持已有的 connection 或 自己新建 connection<br>
   收到数据传给 parser<br>
   根据 parser 返回的状态来判断完成时刻<br>
+  特别注意！！！toSring的每一行前面不能有多余的空格，会影响报文格式，导致解析错误！<br>
 
 ```javascript
 class Request {
   // ... constructor ...
 
   // construct request content
+  // each line can not has space in the front of line!!!
   toString() {
     return `${this.method} ${this.path} HTTP/1.1\r
-    ${Object.keys(this.headers).map(key => `${key}: ${this.headers[key]}`).join("\r\n")}\r
-    \r
-    ${this.bodyText}
-    `;
+${Object.keys(this.headers).map(key => `${key}: ${this.headers[key]}`).join("\r\n")}\r
+\r
+${this.bodyText}
+`;
   }
 
   send(connection) {
