@@ -148,7 +148,7 @@ class ResponseParser {
     } else if (this.current === this.WAITING_HEADER_VALUE) {
       // 
       if (charactor === '\r') {
-        this.current === this.WAITING_HEADER_LINE_END;
+        this.current = this.WAITING_HEADER_LINE_END;
         // save a headers line with headerName and headerValue
         this.headers[this.headerName] = this.headerValue;
         // initial them to collect next headers line
