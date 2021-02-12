@@ -1,0 +1,126 @@
+<div>
+  <div id="id" class="class">
+</div>
+  
+<script type="text/javascript">
+  let selector = {
+    type: "descendantsSelector",
+    name: ""
+  };
+  
+  let selectors = [];
+  
+  function parser(string) {
+    let state = start;
+    for (charactor of string) {
+      state = state(charactor);
+    }
+    initNode("descendantsSelector");
+  }
+  
+  function initNode(type) {
+    if (selector.type !== type 
+        && selector.type !== "attributeSelector" 
+        && selector.type !== "unknownSelector" 
+        && selector.type !== "" ) {
+      selectors.push(selector);
+      selector = {
+        type: type,
+        name: ""
+      }
+    }
+  }
+  
+  function start(charactor) {
+    if (charactor === "#") {
+      initNode("idSelector");
+      return idSelector;
+    } else if (charactor === ".") {
+      initNode("classSelector");
+      return classSelector;
+    } else if (charactor.match(/^[\t\n\f ]$/)) {
+      initNode("descendantsSelector");
+      return start;
+    } else if (charactor === "[") {
+      initNode("attributeSelector");
+      return attributeSelector;
+    } else if (charactor === "*") {
+      initNode("descendantsSelector");
+      return start;
+    } else {
+      if (selector.type === "descendantsSelector" && charactor.match(/^[a-z]$/)) {
+        selector.type = "tagNameSelector";
+        return tagNameSelector(charactor);
+      } else {
+        initNode("unknownSelector");
+        return start;
+      }
+    }
+  }
+  
+  function idSelector(charactor) {
+    if (charactor.match(/^[a-zA-Z]$/)) {
+      selector.name += charactor;
+      return idSelector;
+    } else {
+      return start(charactor);
+    }
+  }
+  
+  function classSelector(charactor) {
+    if (charactor.match(/^[a-zA-Z]$/)) {
+      selector.name += charactor;
+      return classSelector;
+    } else {
+      return start(charactor);
+    }
+  }
+  
+  function attributeSelector(charactor) {
+    if (charactor === "]") {
+      selector.type = "classSelector";
+      initNode("descendantsSelector");
+      return start;
+    } else {
+      selector.name += charactor;
+      return attributeSelector;
+    }
+  }
+  
+  function tagNameSelector(charactor) {
+    if (charactor.match(/^[a-zA-Z]$/)) {
+      selector.name += charactor;
+      return tagNameSelector;
+    } else {
+      return start(charactor);
+    }
+  }
+  
+  function match(selector, element) {
+    let current = element;
+    parser(selector);
+  
+    for (let i = selectors.length-1; i >= 0; i--) {
+      let s = selectors[i];
+  
+      if (s.type === "classSelector" && current.getAttribute("class") !== s.name) {
+        return false;
+      }
+  
+      if (s.type === "idSelector" && current.getAttribute("id") !== s.name) {
+        return false;
+      }
+  
+      if (s.type === "descendantsSelector") {
+        current = current.parentNode;
+      }
+  
+      if (s.type === "tagNameSelector" && current.tagName.toUpperCase() !== s.name.toUpperCase()) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  console.log(match("div #id.class", document.getElementById("id")));
+</script>
