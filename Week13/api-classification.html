@@ -1,0 +1,108 @@
+<script>
+  let names = Object.getOwnPropertyNames(window);
+
+  function filterOut(names, props) {
+    let set = new Set();
+    props.forEach(o => set.add(o));
+    return names.filter(e => !set.has(e));
+  }
+
+  // ECMA 262
+  {
+    let js = new Set();
+    let objects = ["Object", "Function", "Array", "Number", "parseFloat", "parseInt", "Infinity", "NaN", "undefined", "Boolean", "String", "Symbol", "Date", "Promise", "RegExp", "Error", "EvalError", "RangeError", "ReferenceError", "SyntaxError", "TypeError", "URIError", "globalThis", "JSON", "Math", "console"];
+    objects.forEach(o => js.add(o));
+    names = names.filter(e => !js.has(e));
+  }
+
+  // Subclass of Node
+  names = names.filter(e => {
+    try {
+      return !(window[e].prototype instanceof Node);
+    } catch(err) {
+      return true;
+    }
+  }).filter(e => e != "Node");
+
+  // events
+  names = names.filter(e => !e.match(/^on/));
+
+  // webkit private
+  names = names.filter(e => !e.match(/^webkit/));
+
+  // https://html.spec.whatwg.org/#window
+  {
+    let names = Object.getOwnPropertyNames(window);
+    let js = new Set();
+    let objects = ["Object", "Function", "Array", "Number", "parseFloat", "parseInt", "Infinity", "NaN", "undefined", "Boolean", "String", "Symbol", "Date", "Promise", "RegExp", "Error", "EvalError", "RangeError", "ReferenceError", "SyntaxError", "TypeError", "URIError", "globalThis", "JSON", "Math", "console"];
+    objects.forEach(o => js.add(o));
+    names = names.filter(e => !js.has(e));
+
+    names = names.filter(e => {
+      try {
+        return !(window[e].prototype instanceof Node);
+      } catch(err) {
+        return true;
+      }
+    }).filter(e => e != "Node");
+
+    let windowprops = new Set();
+    objects = ["window", "self", "document", "name", "location", "customElements", "locationbar", "menubar", "personalbar", "scrollbars", "statusbar", "toolbar"]
+    objects.forEach(o => windowprops.add(o));
+    names = names.filter(e => !windowprops.has(e));
+  }
+
+  // https://html.spec.whatwg.org/
+  {
+    let interfaces = new Set();
+    objects = ["AbstractWorker","AnimationFrameProvider","AssignedNodesOptions","AudioTrack","AudioTrackList","BarProp","BeforeUnloadEvent","BinaryType","BlobCallback","BroadcastChannel","CanPlayTypeResult","CanvasCompositing","CanvasDirection","CanvasDrawImage","CanvasDrawPath","CanvasFillRule","CanvasFillStrokeStyles","CanvasFilters","CanvasGradient","CanvasImageData","CanvasImageSmoothing","CanvasImageSource","CanvasLineCap","CanvasLineJoin","CanvasPath","CanvasPathDrawingStyles","CanvasPattern","CanvasRect","CanvasRenderingContext2D","CanvasRenderingContext2DSettings","CanvasShadowStyles","CanvasState","CanvasText","CanvasTextAlign","CanvasTextBaseline","CanvasTextDrawingStyles","CanvasTransform","CanvasUserInterface","CloseEvent","CloseEventInit","ColorSpaceConversion","CustomElementConstructor","CustomElementRegistry","DOMParser","DOMParserSupportedType","DOMStringList","DOMStringMap","DataTransfer","DataTransferItem","DataTransferItemList","DedicatedWorkerGlobalScope","Document","DocumentAndElementEventHandlers","DocumentOrShadowRoot","DocumentReadyState","DragEvent","DragEventInit","ElementContentEditable","ElementDefinitionOptions","ElementInternals","ErrorEvent","ErrorEventInit","EventHandler","EventHandlerNonNull","EventSource","EventSourceInit","External","FakeWorkletGlobalScope","FocusOptions","FormDataEvent","FormDataEventInit","FrameRequestCallback","FunctionStringCallback","GlobalEventHandlers","HTMLAllCollection","HTMLAnchorElement","HTMLAreaElement","HTMLAudioElement","HTMLBRElement","HTMLBaseElement","HTMLBodyElement","HTMLButtonElement","HTMLCanvasElement","HTMLDListElement","HTMLDataElement","HTMLDataListElement","HTMLDetailsElement","HTMLDialogElement","HTMLDirectoryElement","HTMLDivElement","HTMLElement","HTMLEmbedElement","HTMLFieldSetElement","HTMLFontElement","HTMLFormControlsCollection","HTMLFormElement","HTMLFrameElement","HTMLFrameSetElement","HTMLHRElement","HTMLHeadElement","HTMLHeadingElement","HTMLHtmlElement","HTMLHyperlinkElementUtils","HTMLIFrameElement","HTMLImageElement","HTMLInputElement","HTMLLIElement","HTMLLabelElement","HTMLLegendElement","HTMLLinkElement","HTMLMapElement","HTMLMarqueeElement","HTMLMediaElement","HTMLMenuElement","HTMLMetaElement","HTMLMeterElement","HTMLModElement","HTMLOListElement","HTMLObjectElement","HTMLOptGroupElement","HTMLOptionElement","HTMLOptionsCollection","HTMLOrSVGElement","HTMLOrSVGImageElement","HTMLOrSVGScriptElement","HTMLOutputElement","HTMLParagraphElement","HTMLParamElement","HTMLPictureElement","HTMLPreElement","HTMLProgressElement","HTMLQuoteElement","HTMLScriptElement","HTMLSelectElement","HTMLSlotElement","HTMLSourceElement","HTMLSpanElement","HTMLStyleElement","HTMLTableCaptionElement","HTMLTableCellElement","HTMLTableColElement","HTMLTableElement","HTMLTableRowElement","HTMLTableSectionElement","HTMLTemplateElement","HTMLTextAreaElement","HTMLTimeElement","HTMLTitleElement","HTMLTrackElement","HTMLUListElement","HTMLUnknownElement","HTMLVideoElement","HashChangeEvent","HashChangeEventInit","History","ImageBitmap","ImageBitmapOptions","ImageBitmapRenderingContext","ImageBitmapRenderingContextSettings","ImageBitmapSource","ImageData","ImageEncodeOptions","ImageOrientation","ImageSmoothingQuality","Location","MediaError","MediaProvider","MessageChannel","MessageEvent","MessageEventInit","MessageEventSource","MessagePort","MimeType","MimeTypeArray","Navigator","NavigatorConcurrentHardware","NavigatorContentUtils","NavigatorCookies","NavigatorID","NavigatorLanguage","NavigatorOnLine","NavigatorPlugins","OffscreenCanvas","OffscreenCanvasRenderingContext2D","OffscreenRenderingContext","OffscreenRenderingContextId","OnBeforeUnloadEventHandler","OnBeforeUnloadEventHandlerNonNull","OnErrorEventHandler","OnErrorEventHandlerNonNull","PageTransitionEvent","PageTransitionEventInit","Path2D","Plugin","PluginArray","PopStateEvent","PopStateEventInit","PostMessageOptions","PremultiplyAlpha","PromiseRejectionEvent","PromiseRejectionEventInit","RadioNodeList","RenderingContext","ResizeQuality","ScrollRestoration","SelectionMode","SharedWorker","SharedWorkerGlobalScope","Storage","StorageEvent","StorageEventInit","SubmitEvent","SubmitEventInit","TextMetrics","TextTrack","TextTrackCue","TextTrackCueList","TextTrackKind","TextTrackList","TextTrackMode","TimeRanges","TimerHandler","TrackEvent","TrackEventInit","ValidityState","ValidityStateFlags","VideoTrack","VideoTrackList","WebSocket","Window","WindowEventHandlers","WindowLocalStorage","WindowOrWorkerGlobalScope","WindowPostMessageOptions","WindowSessionStorage","Worker","WorkerGlobalScope","WorkerLocation","WorkerNavigator","WorkerOptions","WorkerType","Worklet","WorkletGlobalScope","WorkletOptions","credentials","data","lastEventId","origin","ports","source","targetOrigin","transfer","withCredentials"];
+    objects.forEach(o => interfaces.add(o));
+    names = names.filter(e => !interfaces.has(e));
+  }
+
+  // https://www.ecma-international.org/ecma-402/5.0/index.html#Title
+  names = names.filter(e => e != "Intl");
+
+  // https://www.khronos.org/registry/webgl/specs/latest/1.0#5.15
+  {
+    let webGLs = new Set();
+    objects = ["WebGLContextAttributes", "WebGLObject", "WebGLBuffer", "WebGLFramebuffer", "WebGLProgram", "WebGLRenderbuffer", "WebGLShader", "WebGLTexture", "WebGLUniformLocation", "WebGLActiveInfo", "WebGLShaderPrecisionFormat", "WebGLRenderingContextBase", "WebGLRenderingContextOverloads", "WebGLRenderingContext", "WebGLContextEvent"];
+    objects.forEach(o => webGLs.add(o));
+    names = names.filter(e => !webGLs.has(e));
+  }
+
+  // https://www.w3.org/TR/webaudio/
+  names = filterOut(names, ["BaseAudioContext", "AudioContext", "OfflineAudioContext", "OfflineAudioCompletionEvent", "AudioBuffer", "AudioParamMap"])
+
+  // https://wicg.github.io/BackgroundSync/spec/#sync-manager-interface
+  names = filterOut(names, ["SyncManager"])
+
+  // https://encoding.spec.whatwg.org/#dom-textencoder
+  names = filterOut(names, ["TextDecoderCommon", "TextDecoder", "TextEncoderCommon", "TextEncoder", "TextDecoderStream", "TextEncoderStream"])
+
+  // https://streams.spec.whatwg.org/#blqs-class
+  names = filterOut(names, ["ReadableStream", "ReadableStreamGenericReader", "ReadableStreamDefaultReader", "ReadableStreamBYOBReader", "ReadableStreamDefaultController", "ReadableByteStreamController", "ReadableStreamBYOBRequest", "WritableStream", "WritableStreamDefaultWriter", "WritableStreamDefaultController", "TransformStream", "TransformStreamDefaultController", "ByteLengthQueuingStrategy", "CountQueuingStrategy", "GenericTransformStream"])
+
+  // https://dom.spec.whatwg.org/
+  names = filterOut(names, ["Event", "CustomEvent", "EventTarget", "AbortController", "AbortSignal", "NonElementParentNode", "DocumentOrShadowRoot", "ParentNode", "NonDocumentTypeChildNode", "ChildNode", "Slottable", "NodeList", "HTMLCollection", "MutationObserver", "MutationRecord", "Node", "Document", "XMLDocument", "DOMImplementation", "DocumentType", "DocumentFragment", "ShadowRoot", "Element", "NamedNodeMap", "Attr", "CharacterData", "Text", "CDATASection", "ProcessingInstruction", "Comment", "AbstractRange", "StaticRange", "Range", "NodeIterator", "TreeWalker", "DOMTokenList", "XPathResult", "XPathExpression", "XPathEvaluatorBase", "XPathEvaluator", "DOMConfiguration", "DOMError", "DOMErrorHandler", "DOMImplementationList", "DOMImplementationSource", "DOMLocator", "DOMObject", "DOMUserData", "Entity", "EntityReference", "MutationEvent", "MutationNameEvent", "NameList", "Notation", "RangeException", "TypeInfo", "UserDataHandler"])
+  
+  // https://fetch.spec.whatwg.org/
+  names = filterOut(names, ["Headers", "Body", "Request", "Response"])
+  
+  // https://storage.spec.whatwg.org/
+  names = filterOut(names, ["NavigatorStorage", "StorageManager"])
+  
+  // https://notifications.spec.whatwg.org/
+  names = filterOut(names, ["Notification", "NotificationEvent"])
+  
+  // https://notifications.spec.whatwg.org/
+  names = filterOut(names, ["Notification", "NotificationEvent"])
+  
+  // https://url.spec.whatwg.org/
+  names = filterOut(names, ["webkitURL", "URL", "URLSearchParams"])
+
+  // https://xhr.spec.whatwg.org/
+  names = filterOut(names, ["XMLHttpRequestEventTarget", "XMLHttpRequestUpload", "XMLHttpRequest", "FormData", "ProgressEvent"])
+  
+  console.log(names)
+</script>
