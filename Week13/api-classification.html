@@ -10,44 +10,43 @@
   // ECMA 262
   {
     let js = new Set();
-    let objects = ["Object", "Function", "Array", "Number", "parseFloat", "parseInt", "Infinity", "NaN", "undefined", "Boolean", "String", "Symbol", "Date", "Promise", "RegExp", "Error", "EvalError", "RangeError", "ReferenceError", "SyntaxError", "TypeError", "URIError", "globalThis", "JSON", "Math", "console"];
+    let objects = ["globalThis", "console", "BigInt", "BigInt64Array", "BigUint64Array", "Infinity", "NaN", "undefined", "eval", "isFinite", "isNaN", "parseFloat", "parseInt", "decodeURI", "decodeURIComponent", "encodeURI", "encodeURIComponent", "Array", "Date", "RegExp", "Promise", "Proxy", "Map", "WeakMap", "Set", "WeakSet", "Function", "Boolean", "String", "Number", "Symbol", "Object", "Error", "EvalError", "RangeError", "ReferenceError", "SyntaxError", "TypeError", "URIError", "ArrayBuffer", "SharedArrayBuffer", "DataView", "Float32Array", "Float64Array", "Int8Array", "Int16Array", "Int32Array", "Uint8Array", "Uint16Array", "Uint32Array", "Uint8ClampedArray", "Atomics", "JSON", "Math", "Reflect", "escape", "unescape"];
     objects.forEach(o => js.add(o));
     names = names.filter(e => !js.has(e));
   }
 
-  // Subclass of Node
-  names = names.filter(e => {
-    try {
-      return !(window[e].prototype instanceof Node);
+  names = names.filter( e => {
+    try { 
+        return !(window[e].prototype instanceof Node)
     } catch(err) {
-      return true;
+        return true;
     }
-  }).filter(e => e != "Node");
+  }).filter( e => e != "Node");
 
   // events
-  names = names.filter(e => !e.match(/^on/));
+  names = names.filter( e => !e.match(/^on/))
 
   // webkit private
-  names = names.filter(e => !e.match(/^webkit/));
+  names = names.filter( e => !e.match(/^webkit/))
 
   // https://html.spec.whatwg.org/#window
   {
-    let names = Object.getOwnPropertyNames(window);
+    let names = Object.getOwnPropertyNames(window)
     let js = new Set();
-    let objects = ["Object", "Function", "Array", "Number", "parseFloat", "parseInt", "Infinity", "NaN", "undefined", "Boolean", "String", "Symbol", "Date", "Promise", "RegExp", "Error", "EvalError", "RangeError", "ReferenceError", "SyntaxError", "TypeError", "URIError", "globalThis", "JSON", "Math", "console"];
+    let objects = ["BigInt", "BigInt64Array", "BigUint64Array", "Infinity", "NaN", "undefined", "eval", "isFinite", "isNaN", "parseFloat", "parseInt", "decodeURI", "decodeURIComponent", "encodeURI", "encodeURIComponent", "Array", "Date", "RegExp", "Promise", "Proxy", "Map", "WeakMap", "Set", "WeakSet", "Function", "Boolean", "String", "Number", "Symbol", "Object", "Error", "EvalError", "RangeError", "ReferenceError", "SyntaxError", "TypeError", "URIError", "ArrayBuffer", "SharedArrayBuffer", "DataView", "Float32Array", "Float64Array", "Int8Array", "Int16Array", "Int32Array", "Uint8Array", "Uint16Array", "Uint32Array", "Uint8ClampedArray", "Atomics", "JSON", "Math", "Reflect", "escape", "unescape"];
     objects.forEach(o => js.add(o));
     names = names.filter(e => !js.has(e));
 
-    names = names.filter(e => {
-      try {
-        return !(window[e].prototype instanceof Node);
+    names = names.filter( e => {
+      try { 
+          return !(window[e].prototype instanceof Node)
       } catch(err) {
-        return true;
+          return true;
       }
-    }).filter(e => e != "Node");
+    }).filter( e => e != "Node")
 
     let windowprops = new Set();
-    objects = ["window", "self", "document", "name", "location", "customElements", "locationbar", "menubar", "personalbar", "scrollbars", "statusbar", "toolbar"]
+    objects = ["window", "self", "document", "name", "location", "history", "customElements", "locationbar", "menubar", " personalbar", "scrollbars", "statusbar", "toolbar", "status", "close", "closed", "stop", "focus", " blur", "frames", "length", "top", "opener", "parent", "frameElement", "open", "navigator", "applicationCache", "alert", "confirm", "prompt", "print", "postMessage", "console"];
     objects.forEach(o => windowprops.add(o));
     names = names.filter(e => !windowprops.has(e));
   }
@@ -55,27 +54,31 @@
   // https://html.spec.whatwg.org/
   {
     let interfaces = new Set();
-    objects = ["AbstractWorker","AnimationFrameProvider","AssignedNodesOptions","AudioTrack","AudioTrackList","BarProp","BeforeUnloadEvent","BinaryType","BlobCallback","BroadcastChannel","CanPlayTypeResult","CanvasCompositing","CanvasDirection","CanvasDrawImage","CanvasDrawPath","CanvasFillRule","CanvasFillStrokeStyles","CanvasFilters","CanvasGradient","CanvasImageData","CanvasImageSmoothing","CanvasImageSource","CanvasLineCap","CanvasLineJoin","CanvasPath","CanvasPathDrawingStyles","CanvasPattern","CanvasRect","CanvasRenderingContext2D","CanvasRenderingContext2DSettings","CanvasShadowStyles","CanvasState","CanvasText","CanvasTextAlign","CanvasTextBaseline","CanvasTextDrawingStyles","CanvasTransform","CanvasUserInterface","CloseEvent","CloseEventInit","ColorSpaceConversion","CustomElementConstructor","CustomElementRegistry","DOMParser","DOMParserSupportedType","DOMStringList","DOMStringMap","DataTransfer","DataTransferItem","DataTransferItemList","DedicatedWorkerGlobalScope","Document","DocumentAndElementEventHandlers","DocumentOrShadowRoot","DocumentReadyState","DragEvent","DragEventInit","ElementContentEditable","ElementDefinitionOptions","ElementInternals","ErrorEvent","ErrorEventInit","EventHandler","EventHandlerNonNull","EventSource","EventSourceInit","External","FakeWorkletGlobalScope","FocusOptions","FormDataEvent","FormDataEventInit","FrameRequestCallback","FunctionStringCallback","GlobalEventHandlers","HTMLAllCollection","HTMLAnchorElement","HTMLAreaElement","HTMLAudioElement","HTMLBRElement","HTMLBaseElement","HTMLBodyElement","HTMLButtonElement","HTMLCanvasElement","HTMLDListElement","HTMLDataElement","HTMLDataListElement","HTMLDetailsElement","HTMLDialogElement","HTMLDirectoryElement","HTMLDivElement","HTMLElement","HTMLEmbedElement","HTMLFieldSetElement","HTMLFontElement","HTMLFormControlsCollection","HTMLFormElement","HTMLFrameElement","HTMLFrameSetElement","HTMLHRElement","HTMLHeadElement","HTMLHeadingElement","HTMLHtmlElement","HTMLHyperlinkElementUtils","HTMLIFrameElement","HTMLImageElement","HTMLInputElement","HTMLLIElement","HTMLLabelElement","HTMLLegendElement","HTMLLinkElement","HTMLMapElement","HTMLMarqueeElement","HTMLMediaElement","HTMLMenuElement","HTMLMetaElement","HTMLMeterElement","HTMLModElement","HTMLOListElement","HTMLObjectElement","HTMLOptGroupElement","HTMLOptionElement","HTMLOptionsCollection","HTMLOrSVGElement","HTMLOrSVGImageElement","HTMLOrSVGScriptElement","HTMLOutputElement","HTMLParagraphElement","HTMLParamElement","HTMLPictureElement","HTMLPreElement","HTMLProgressElement","HTMLQuoteElement","HTMLScriptElement","HTMLSelectElement","HTMLSlotElement","HTMLSourceElement","HTMLSpanElement","HTMLStyleElement","HTMLTableCaptionElement","HTMLTableCellElement","HTMLTableColElement","HTMLTableElement","HTMLTableRowElement","HTMLTableSectionElement","HTMLTemplateElement","HTMLTextAreaElement","HTMLTimeElement","HTMLTitleElement","HTMLTrackElement","HTMLUListElement","HTMLUnknownElement","HTMLVideoElement","HashChangeEvent","HashChangeEventInit","History","ImageBitmap","ImageBitmapOptions","ImageBitmapRenderingContext","ImageBitmapRenderingContextSettings","ImageBitmapSource","ImageData","ImageEncodeOptions","ImageOrientation","ImageSmoothingQuality","Location","MediaError","MediaProvider","MessageChannel","MessageEvent","MessageEventInit","MessageEventSource","MessagePort","MimeType","MimeTypeArray","Navigator","NavigatorConcurrentHardware","NavigatorContentUtils","NavigatorCookies","NavigatorID","NavigatorLanguage","NavigatorOnLine","NavigatorPlugins","OffscreenCanvas","OffscreenCanvasRenderingContext2D","OffscreenRenderingContext","OffscreenRenderingContextId","OnBeforeUnloadEventHandler","OnBeforeUnloadEventHandlerNonNull","OnErrorEventHandler","OnErrorEventHandlerNonNull","PageTransitionEvent","PageTransitionEventInit","Path2D","Plugin","PluginArray","PopStateEvent","PopStateEventInit","PostMessageOptions","PremultiplyAlpha","PromiseRejectionEvent","PromiseRejectionEventInit","RadioNodeList","RenderingContext","ResizeQuality","ScrollRestoration","SelectionMode","SharedWorker","SharedWorkerGlobalScope","Storage","StorageEvent","StorageEventInit","SubmitEvent","SubmitEventInit","TextMetrics","TextTrack","TextTrackCue","TextTrackCueList","TextTrackKind","TextTrackList","TextTrackMode","TimeRanges","TimerHandler","TrackEvent","TrackEventInit","ValidityState","ValidityStateFlags","VideoTrack","VideoTrackList","WebSocket","Window","WindowEventHandlers","WindowLocalStorage","WindowOrWorkerGlobalScope","WindowPostMessageOptions","WindowSessionStorage","Worker","WorkerGlobalScope","WorkerLocation","WorkerNavigator","WorkerOptions","WorkerType","Worklet","WorkletGlobalScope","WorkletOptions","credentials","data","lastEventId","origin","ports","source","targetOrigin","transfer","withCredentials"];
+    objects = ["ApplicationCache", "AudioTrack", "AudioTrackList", "BarProp", "BeforeUnloadEvent", "BroadcastChannel", "CanvasGradient", "CanvasPattern", "CanvasRenderingContext2D", "CloseEvent", "CustomElementRegistry", "DOMStringList", "DOMStringMap", "DataTransfer", "DataTransferItem", "DataTransferItemList", "DedicatedWorkerGlobalScope", "Document", "DragEvent", "ErrorEvent", "EventSource", "External", "FormDataEvent", "HTMLAllCollection", "HashChangeEvent", "History", "ImageBitmap", "ImageBitmapRenderingContext", "ImageData", "Location", "MediaError", "MessageChannel", "MessageEvent", "MessagePort", "MimeType", "MimeTypeArray", "Navigator", "OffscreenCanvas", "OffscreenCanvasRenderingContext2D", "PageTransitionEvent", "Path2D", "Plugin", "PluginArray", "PopStateEvent", "PromiseRejectionEvent", "RadioNodeList", "SharedWorker", "SharedWorkerGlobalScope", "Storage", "StorageEvent", "TextMetrics", "TextTrack", "TextTrackCue", "TextTrackCueList", "TextTrackList", "TimeRanges", "TrackEvent", "ValidityState", "VideoTrack", "VideoTrackList", "WebSocket", "Window", "Worker", "WorkerGlobalScope", "WorkerLocation", "WorkerNavigator"];
     objects.forEach(o => interfaces.add(o));
+
     names = names.filter(e => !interfaces.has(e));
   }
 
-  // https://www.ecma-international.org/ecma-402/5.0/index.html#Title
-  names = names.filter(e => e != "Intl");
+  // http://www.ecma-international.org/ecma-402/5.0/index.html#Title
+  names = names.filter(e => e != "Intl")
 
-  // https://www.khronos.org/registry/webgl/specs/latest/1.0#5.15
-  {
-    let webGLs = new Set();
-    objects = ["WebGLContextAttributes", "WebGLObject", "WebGLBuffer", "WebGLFramebuffer", "WebGLProgram", "WebGLRenderbuffer", "WebGLShader", "WebGLTexture", "WebGLUniformLocation", "WebGLActiveInfo", "WebGLShaderPrecisionFormat", "WebGLRenderingContextBase", "WebGLRenderingContextOverloads", "WebGLRenderingContext", "WebGLContextEvent"];
-    objects.forEach(o => webGLs.add(o));
-    names = names.filter(e => !webGLs.has(e));
-  }
+  // https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15
+  names = filterOut(names, ["WebGLVertexArrayObject","WebGLTransformFeedback","WebGLSync","WebGLSampler","WebGLQuery","WebGL2RenderingContext","WebGLContextEvent","WebGLObject", "WebGLBuffer", "WebGLFramebuffer", "WebGLProgram", "WebGLRenderbuffer", "WebGLShader", "WebGLTexture", "WebGLUniformLocation", "WebGLActiveInfo", "WebGLShaderPrecisionFormat", "WebGLRenderingContext"]);
 
   // https://www.w3.org/TR/webaudio/
-  names = filterOut(names, ["BaseAudioContext", "AudioContext", "OfflineAudioContext", "OfflineAudioCompletionEvent", "AudioBuffer", "AudioParamMap"])
+  names = filterOut(names, ["AudioContext", "AudioNode", "AnalyserNode", "AudioBuffer", "AudioBufferSourceNode", "AudioDestinationNode", "AudioParam", "AudioListener", "AudioWorklet", "AudioWorkletGlobalScope", "AudioWorkletNode", "AudioWorkletProcessor", "BiquadFilterNode", "ChannelMergerNode", "ChannelSplitterNode", "ConstantSourceNode", "ConvolverNode", "DelayNode", "DynamicsCompressorNode", "GainNode", "IIRFilterNode", "MediaElementAudioSourceNode", "MediaStreamAudioSourceNode", "MediaStreamTrackAudioSourceNode", "MediaStreamAudioDestinationNode", "PannerNode", "PeriodicWave", "OscillatorNode", "StereoPannerNode", "WaveShaperNode", "ScriptProcessorNode", "AudioProcessingEvent"]);
+
+  // https://encoding.spec.whatwg.org/#dom-textencoder
+  names = filterOut(names, ["TextDecoder", "TextEncoder", "TextDecoderStream", "TextEncoderStream"]);
+
+
+  // https://streams.spec.whatwg.org/#blqs-class
+  names = filterOut(names, ["ReadableStream", "ReadableStreamDefaultReader", "ReadableStreamBYOBReader", "ReadableStreamDefaultController", "ReadableByteStreamController", "ReadableStreamBYOBRequest", "WritableStream", "WritableStreamDefaultWriter", "WritableStreamDefaultController", "TransformStream", "TransformStreamDefaultController", "ByteLengthQueuingStrategy", "CountQueuingStrategy"]);
+
 
   // https://wicg.github.io/BackgroundSync/spec/#sync-manager-interface
-  names = filterOut(names, ["SyncManager"])
+  names = filterOut(names, ["SyncManager"]);
 
   // https://encoding.spec.whatwg.org/#dom-textencoder
   names = filterOut(names, ["TextDecoderCommon", "TextDecoder", "TextEncoderCommon", "TextEncoder", "TextDecoderStream", "TextEncoderStream"])
