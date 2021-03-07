@@ -100,7 +100,7 @@ module.exports = {
 }
 ```
 
-## JSX 的基本使用方法
+## JSX 的基本使用方法
 
 - 替换 React.createElement
 ```javascript
