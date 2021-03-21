@@ -1,0 +1,7 @@
+<!-- <script src="./index.js"></script> -->
+<body oncontextmenu="event.preventDefault()"></body>
+<script type="module">  
+  import { enableGesture } from './index.js'; 
+  enableGesture(document.documentElement);
+  document.documentElement.addEventListener("tap", e => console.log("tap event trigger!"))
+</script>
