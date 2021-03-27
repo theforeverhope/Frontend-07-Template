@@ -33,7 +33,7 @@ export class Carousel extends Component {
     this.root.addEventListener("start", event => {
       timeline.pause();
       clearInterval(handler);
-      let progress = (Date.now() - t) / 1500;
+      let progress = (Date.now() - t) / 1500 >= 1 ? 1 : (Date.now() - t) / 1500;
       ax = ease(progress) * 500 - 500;
     })
 
@@ -65,7 +65,7 @@ export class Carousel extends Component {
       let direction = Math.round((distX % 500) / 500);
 
       if (event.isFlick) {
-        if (event.velocity < 0) {
+        if (event.velocity > 0) {
           direction = Math.ceil((distX % 500) / 500);
         } else {
           direction = Math.floor((distX % 500) / 500);
@@ -82,9 +82,11 @@ export class Carousel extends Component {
           1500, 0, ease, v => `translateX(${v}px)`));
       }
 
+
       this[STATE].position = this[STATE].position - ((distX - distX % 500) / 500) - direction;
       // if drag too far then position will be a large negtive number, make it to be positive one.
       this[STATE].position = (this[STATE].position % children.length + children.length) % children.length;
+
       this.triggerEvent("change", { position: this[STATE].position });
     })
 
@@ -102,7 +104,7 @@ export class Carousel extends Component {
         500 - nextPosition * 500, - nextPosition * 500, 1500, 0, ease, v => `translateX(${v}px)`))
 
       this[STATE].position = nextPosition;
-      this.triggerEvent("Change", { position: this[STATE].position });
+      this.triggerEvent("change", { position: this[STATE].position });
     }
     handler = setInterval(nextPicture, 3000)
 

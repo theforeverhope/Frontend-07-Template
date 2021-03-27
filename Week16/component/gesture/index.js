@@ -185,11 +185,15 @@ export class Recognizer {
     } else {
       d = Math.sqrt((point.clientX - context.points[0].x) ** 2 + (point.clientY - context.points[0].y) ** 2);
       v = d / (Date.now() - context.points[0].t);
+      if (point.clientX < context.points[0].x) {
+        v = -v
+      }
     }
   
     console.log('speed', v)
   
-    if (v > 1.5) {
+    if (Math.abs(v) > 1.5) {
+      console.log('flick speed', v)
       context.isFlick = true;
       this.dispatcher.dispatch("flick", {
         startX: context.startX,
