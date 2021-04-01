@@ -10,6 +10,7 @@ $ mkdir toolchain
 $ npm init
 $ npm install -g yo
 $ npm install yeoman-generator@4.13.0
+$ npm link
 ```
 
 - 初始化 generators 例: toolchain
