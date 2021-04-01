@@ -8,13 +8,13 @@ const config = {
     rules: [
       { 
         test: /\.vue$/, 
-        loader: 'vue-loader' 
+        use: 'vue-loader' 
       },
       { 
         test: /\.js$/, 
-        loader: 'babel-loader',
+        use: 'babel-loader',
         options: {
-          presets: ["@babel/preset-env"]
+          presets: ['@babel/preset-env']
         }
       },
       {

@@ -43,8 +43,8 @@ module.exports = class extends Generator {
     // Extend or create package.json file in destination path
     this.fs.extendJSON(this.destinationPath('package.json'), pkgJson);
     this.npmInstall(["vue"], { 'save-dev': false });
-    this.npmInstall(["webpack@4.44.2", "vue-loader", "vue-style-loader", 
-      "css-loader", "vue-template-compiler", "copy-webpack-plugin"], { 'save-dev': true });
+    this.npmInstall(["webpack@5.5.0", "webpack-cli@4.2.0", "vue-loader@15.9.5", "babel-loader@8.2.1", "@babel/core@7.12.3", "@babel/preset-env@7.12.1", "vue-style-loader@4.1.2", 
+      "css-loader@5.0.1", "vue-template-compiler@2.6.12", "copy-webpack-plugin@6.3.1"], { 'save-dev': true });
 
     this.fs.copyTpl(
       this.templatePath('HelloWorld.vue'),
